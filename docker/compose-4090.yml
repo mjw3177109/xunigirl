@@ -1,0 +1,22 @@
+# Optional DUIX lip-sync video worker. No separate DSH, ASR or TTS containers.
+services:
+  duix-avatar-gen-video:
+    image: guiji2025/duix.avatar:latest
+    container_name: duix-avatar-gen-video
+    restart: "no"
+    ports:
+      - "127.0.0.1:9000:8383"
+    privileged: true
+    shm_size: "8g"
+    environment:
+      PYTORCH_CUDA_ALLOC_CONF: max_split_size_mb:512
+    volumes:
+      - ../data/duix:/code/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: python /code/app_local.py
