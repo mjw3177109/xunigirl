@@ -1,0 +1,9 @@
+{
+  "source_type": "local_espeak_synthetic_preview",
+  "quality": "preview_replace_with_qwen_generated_voice",
+  "transcript": "ref_text.txt",
+  "sample_rate": 16000,
+  "channels": 1,
+  "intended_preset": "sweet_youthful_adult_female",
+  "notice_zh": "这份 WAV 是不依赖网络生成的可用试听样音，机械感明显。首次完整安装将尝试用 Qwen3-TTS 0.6B CustomVoice 重新合成音色。"
+}
