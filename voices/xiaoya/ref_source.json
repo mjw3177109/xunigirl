@@ -1,9 +1,42 @@
 {
-  "source_type": "local_espeak_synthetic_preview",
-  "quality": "preview_replace_with_qwen_generated_voice",
-  "transcript": "ref_text.txt",
+  "source_type": "qwen3_tts_custom_voice_synthetic",
+  "quality": "neural_voice_generated_on_kaggle_t4",
+  "status": "actual_gpu_inference_verified",
+  "model_reference": "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
+  "model_clone": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+  "speaker": "Vivian",
+  "gpu": "Tesla T4",
   "sample_rate": 16000,
   "channels": 1,
-  "intended_preset": "sweet_youthful_adult_female",
-  "notice_zh": "这份 WAV 是不依赖网络生成的可用试听样音，机械感明显。首次完整安装将尝试用 Qwen3-TTS 0.6B CustomVoice 重新合成音色。"
+  "duration_sec": 8.24,
+  "clone_duration_sec": 6.64,
+  "transcript": "你好呀，我是小雅。今天终于见到你啦！想聊什么都可以告诉我，我会认真听着呢。",
+  "source_kaggle": "https://www.kaggle.com/code/mjw3177109/xunigirl-xiaoya-gpu-voice-benchmark",
+  "source_github_artifact_run": 39545400976,
+  "sha256": {
+    "ref_audio.wav": "5017add8a805d69b97a60d4a7caf16d0f087c8dbec0cf62e636154b1ee289feb",
+    "ref_text.txt": "65c128ff2bf6046e13d7f81b056a26a484d17cafcab3c11025074c242cb22a6a",
+    "clone_test.wav": "f1ba348935512be11323b174a8089c724be9d386e0cd497f385fe00caa59d078"
+  },
+  "stages": [
+    {
+      "name": "custom_reference",
+      "elapsed_sec": 43.39,
+      "cuda_peak_allocated_mb": 4457.8,
+      "cuda_peak_reserved_mb": 4754.0,
+      "seconds": 8.24,
+      "file": "ref_audio.wav",
+      "bytes": 263724
+    },
+    {
+      "name": "base_voice_clone",
+      "elapsed_sec": 49.95,
+      "cuda_peak_allocated_mb": 4829.8,
+      "cuda_peak_reserved_mb": 5060.0,
+      "seconds": 6.64,
+      "file": "clone_test.wav",
+      "bytes": 212526
+    }
+  ],
+  "notes": "AI-generated voice, not a recording of any real person. Auditory quality is subjective; listening review is recommended."
 }
