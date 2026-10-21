@@ -2,15 +2,8 @@
 <div class="shell"><aside class="sidebar"><h2>✦ VoiceCompanion</h2><p>DeepSeek · RTX 4090</p><button id="newChat">＋ 创建新对话</button><h3>最近对话</h3><div id="sessions"></div><small id="apiLabel"></small><small id="voiceLabel"></small><small id="gpuLabel"></small></aside>
 <main><header><div><h1>和小雅聊聊吧</h1><p>云端 LLM + 本地语音 · 无需 DSH</p></div><button id="stop" disabled>停止回复</button></header>
 <section class="columns"><div class="chat"><div id="messages"><p>你好呀，今天想聊什么？</p></div><div id="notice" hidden></div><form id="composer"><textarea id="text" maxlength="4000" placeholder="输入消息… Enter 发送，Shift+Enter 换行"></textarea><div class="actions"><button id="mic" type="button">🎙️ 说话</button><button id="send" type="submit">发送 ↗</button></div></form></div>
-<aside class="companion"><h3>数字人 · 小雅</h3><div class="avatarBox"><img id="avatarPortrait" src="/portraits/xiaoya.png" alt="小雅角色"/><video id="avatarVideo" playsinline></video><span id="videoState">待机</span></div><div class="settings">
+<aside class="companion"><h3>数字人 · 小雅</h3><div class="avatarBox"><img id="avatarPortrait" src="/portraits/xiaoya.jpg" alt="小雅角色"/><video id="avatarVideo" playsinline></video><span id="videoState">待机</span></div><div class="settings">
 <label>回复模型<select id="model"><option value="deepseek-flash">DeepSeek Flash</option><option value="deepseek-v4-pro">DeepSeek V4 Pro</option></select></label>
-<label>自动朗读<input id="speak" type="checkbox" checked></label>
-<label>数字人口播<input id="digital" type="checkbox"></label>
-<label>自动插话<input id="autoBarge" type="checkbox"></label>
-<label>QQ 私聊联动<input id="qq" type="checkbox"></label>
-<label>音色<select id="voices"><option value="">加载中</option></select></label>
-<label>数字人形象<select id="avatars"><option value="">加载中</option></select></label>
-<label>待机动画<select id="idle"><option value="">默认</option></select></label>
-<label>角色补充设定<textarea id="persona" rows="3" placeholder="回复风格等"></textarea></label>
-<h4>长期记忆</h4><div id="memories"></div><div class="actions"><input id="memoryInput" maxlength="500" placeholder="要记住的偏好"><button id="addMemory" type="button">保存</button></div></div></aside></section></main></div>
-<script type="module" src="/static/app.js"></script></body></html>
+<label>自动朗读<input id="speak" type="checkbox" checked></label><label>数字人口播<input id="digital" type="checkbox"></label><label>自动插话<input id="autoBarge" type="checkbox"></label><label>QQ 私聊联动<input id="qq" type="checkbox"></label>
+<label>音色<select id="voices"><option value="">加载中</option></select></label><label>数字人形象<select id="avatars"><option value="">加载中</option></select></label><label>待机动画<select id="idle"><option value="">默认</option></select></label>
+<label>角色补充设定<textarea id="persona" rows="3" placeholder="回复风格等"></textarea></label><h4>长期记忆</h4><div id="memories"></div><div class="actions"><input id="memoryInput" maxlength="500" placeholder="要记住的偏好"><button id="addMemory" type="button">保存</button></div></div></aside></section></main></div><script type="module" src="/static/app.js"></script></body></html>
