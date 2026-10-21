@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 48
     env:
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-      KERNEL_SLUG: mjw3177109/xunigirl-xiaoya-avatar-video-pilot
+      KERNEL_SLUG: mjw3177109/xunigirl-xiaoya-sadtalker-gpu-mp4-pilot
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,16 +37,23 @@ jobs:
               print(f"Poll {i+1}/40 rc={p.returncode}: {status[-230:]}",flush=True)
               if p.returncode==0 and "COMPLETE" in status and "INCOMPLETE" not in status:
                   print("Kaggle reported COMPLETE",flush=True);sys.exit(0)
-              if p.returncode==0 and any(s in status for s in ("ERROR","FAILED","CANCELLED")):
+              if p.returncode==0 and any(s in status for s in ("ERROR","FAILED","CANCELLED","CANCELED")):
                   sys.exit("Kaggle notebook failed; see Kaggle logs")
               time.sleep(60)
           sys.exit("Kaggle notebook not complete within 40m")
           PY
+      - name: Collect Kaggle notebook files and error logs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p kaggle_video_result
+          kaggle kernels output "$KERNEL_SLUG" -p kaggle_video_result -o || true
+          echo "Kaggle file inventory:"
+          find kaggle_video_result -maxdepth 5 -type f -printf '%p %s bytes\\n' || true
       - name: Download and validate actual MP4, never generate synthetic pass result
         shell: bash
         run: |
           mkdir -p kaggle_video_result
-          kaggle kernels output "$KERNEL_SLUG" -p kaggle_video_result -o
           python - <<'PY'
           import pathlib,json,subprocess
           root=pathlib.Path("kaggle_video_result")
