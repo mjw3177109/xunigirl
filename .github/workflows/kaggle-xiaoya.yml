@@ -1,0 +1,64 @@
+name: Kaggle Free GPU Xiaoya
+on:
+  workflow_dispatch:
+    inputs:
+      kaggle_username:
+        description: "Kaggle username (not email)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  submit-kaggle-gpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_USER: ${{ inputs.kaggle_username }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate credentials and build metadata
+        shell: bash
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo "::error::Missing secret KAGGLE_API_TOKEN in this repository"
+            exit 1
+          fi
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          user=os.environ["KAGGLE_USER"].strip()
+          if not re.fullmatch(r"[A-Za-z0-9_-]{1,48}",user):
+              raise SystemExit("Invalid Kaggle username")
+          meta={
+              "id": user + "/xunigirl-xiaoya-gpu-voice",
+              "title":"Xunigirl Xiaoya GPU voice benchmark",
+              "code_file":"xiaoya_t4_gpu_test.ipynb",
+              "language":"python",
+              "kernel_type":"notebook",
+              "is_private":True,
+              "enable_gpu":True,
+              "enable_internet":True,
+              "dataset_sources":[],
+              "competition_sources":[],
+              "kernel_sources":[],
+              "model_sources":[]
+          }
+          Path("kaggle/kernel-metadata.json").write_text(json.dumps(meta,indent=2),encoding="utf-8")
+          print("Prepared Kaggle notebook:",meta["id"])
+          PY
+      - name: Install Kaggle CLI
+        run: python -m pip install --upgrade kaggle
+      - name: Submit to free T4 GPU
+        run: kaggle kernels push -p kaggle --accelerator NvidiaTeslaT4 --timeout 3600
+      - name: Show execution link
+        shell: bash
+        run: |
+          echo "Notebook submitted to Kaggle. This does NOT prove inference completed." >> "$GITHUB_STEP_SUMMARY"
+          echo "https://www.kaggle.com/code/${KAGGLE_USER}/xunigirl-xiaoya-gpu-voice" >> "$GITHUB_STEP_SUMMARY"
+          kaggle kernels status "${KAGGLE_USER}/xunigirl-xiaoya-gpu-voice" || true
