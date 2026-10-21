@@ -41,7 +41,7 @@ jobs:
           if not re.fullmatch(r"[A-Za-z0-9_-]{1,48}",user):
               raise SystemExit("Invalid Kaggle username")
           meta={
-              "id": user + "/xunigirl-xiaoya-gpu-voice",
+              "id": user + "/xunigirl-xiaoya-gpu-voice-benchmark",
               "title":"Xunigirl Xiaoya GPU voice benchmark",
               "code_file":"xiaoya_t4_gpu_test.ipynb",
               "language":"python",
@@ -66,5 +66,5 @@ jobs:
         shell: bash
         run: |
           echo "Notebook submitted to Kaggle. This does NOT prove inference completed." >> "$GITHUB_STEP_SUMMARY"
-          echo "https://www.kaggle.com/code/${KAGGLE_USER}/xunigirl-xiaoya-gpu-voice" >> "$GITHUB_STEP_SUMMARY"
-          kaggle kernels status "${KAGGLE_USER}/xunigirl-xiaoya-gpu-voice" || true
+          echo "https://www.kaggle.com/code/${KAGGLE_USER}/xunigirl-xiaoya-gpu-voice-benchmark" >> "$GITHUB_STEP_SUMMARY"
+          kaggle kernels status "${KAGGLE_USER}/xunigirl-xiaoya-gpu-voice-benchmark" || true
