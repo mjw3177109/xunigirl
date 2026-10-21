@@ -1,0 +1,71 @@
+name: Promote verified Xiaoya neural voice
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/promote-xiaoya-voice.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: promote-xiaoya-neural-voice
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download the existing verified GPU result artifact
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 39545400976
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: xiaoya-real-gpu-voice
+          path: .promotion
+      - name: Verify authentic GPU output and install WAV
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          root=Path(".promotion")
+          required={
+            "xiaoya_results/ref_audio.wav",
+            "xiaoya_results/ref_text.txt",
+            "xiaoya_results/clone_test.wav",
+            "xiaoya_results/gpu_report.json",
+          }
+          found={str(x.relative_to(root)).replace(chr(92), "/") for x in root.rglob("*") if x.is_file()}
+          assert required <= found, f"Missing download files: {required-found}"
+          with ZipFile("kaggle_verified_voice_artifact.zip","w",ZIP_DEFLATED) as z:
+            for n in sorted(required):z.write(root/n,n)
+          PY
+          python scripts/promote_xiaoya_voice.py --artifact kaggle_verified_voice_artifact.zip
+          python -m pip install --disable-pip-version-check -q -r requirements-core.txt pytest soundfile
+          python -m pytest -q
+      - name: Commit verified voice and preserve mechanical preview backup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- voices/xiaoya/ref_audio.wav voices/xiaoya/ref_text.txt \
+            voices/xiaoya/ref_source.json assets/voice-samples/xiaoya_clone_test.wav \
+            assets/voice-archive/xiaoya_mechanical_preview.wav
+          if git diff --cached --quiet; then
+            echo "Same verified voice already installed" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "assets: install verified Kaggle T4 Xiaoya neural voice"
+          git push origin HEAD:main
+          echo "Installed generated 8.24s reference WAV and 6.64s clone test" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source run: https://github.com/mjw3177109/xunigirl/actions/runs/39545400976" >> "$GITHUB_STEP_SUMMARY"
