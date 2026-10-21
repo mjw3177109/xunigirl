@@ -74,10 +74,14 @@ def main():
     cfg['digital_human']['data_dir']=str((ROOT/'data'/'duix').resolve())
     cfg['digital_human']['duix_base']='http://127.0.0.1:9000'
     cfg['digital_human']['container_name']='duix-avatar-gen-video'
-    if digital_human != '':
+    # On the first install, .env decides the startup default. After that the
+    # browser toggle is the source of truth (the bridge persists it in this
+    # JSON file). Re-running CONFIGURE_VOICE must not silently turn it off.
+    if not target.exists():
         cfg['digital_human']['enabled'] = digital_human == '1'
-    elif not target.exists():
-        cfg['digital_human']['enabled'] = False  # first install only
+    elif os.getenv('VC_RESET_DH_ON_CONFIG', '').strip() == '1':
+        cfg['digital_human']['enabled'] = digital_human == '1'
+    # Otherwise preserve existing cfg['digital_human']['enabled'].
     cfg['digital_human']['stop_container_on_disable']=True
     cfg['deepseek']['api_key']='' # DeepSeek key exclusively in root .env
     cfg['omnivoice']['base']='' # no WSL / OmniVoice required in this deployment
