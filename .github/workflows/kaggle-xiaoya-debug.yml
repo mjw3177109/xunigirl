@@ -1,0 +1,40 @@
+name: Diagnose Kaggle Xiaoya Notebook
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/kaggle-xiaoya-debug.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Kaggle Xiaoya diagnosis once')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KERNEL: mjw3177109/xunigirl-xiaoya-gpu-voice-benchmark
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CLI with secret access
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || { echo "::error::Missing KAGGLE_API_TOKEN"; exit 1; }
+          python -m pip install -q --upgrade kaggle
+      - name: Get private Kaggle status and failure log
+        shell: bash
+        run: |
+          echo "Status:"
+          kaggle kernels status "$KERNEL" || true
+          echo "Notebook logs:"
+          kaggle kernels logs "$KERNEL" > kaggle_failure.log 2>&1 || true
+          tail -n 180 kaggle_failure.log
+          echo "Output file index:"
+          kaggle kernels files "$KERNEL" || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xiaoya-kaggle-diagnostic-logs
+          path: kaggle_failure.log
+          retention-days: 14
