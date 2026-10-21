@@ -26,6 +26,7 @@ jobs:
         run: |
           test -n "$KAGGLE_API_TOKEN" || { echo "::error::Missing KAGGLE_API_TOKEN"; exit 1; }
           python -m pip install -q --upgrade kaggle
+      # Second attempt: FP32 inference on free T4 after first-run FP16 NaN.
       - name: Wait for real GPU result
         shell: bash
         run: |
