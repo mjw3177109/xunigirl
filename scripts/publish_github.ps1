@@ -31,7 +31,10 @@ try {
     & git add -A
     if ($LASTEXITCODE -ne 0) { throw 'git add failed' }
     & git diff --cached --quiet
-    if ($LASTEXITCODE -eq 0) { Write-Host '[OK] Remote already matches local source.' -ForegroundColor Green; exit 0 }
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host '[OK] Remote already matches local source.' -ForegroundColor Green
+        exit 0
+    }
     $missingEmail = (& git config user.email)
     $missingName = (& git config user.name)
     if (-not $missingEmail -or -not $missingName) { throw 'Configure git user.name and user.email first (git config --global user.name ...).' }

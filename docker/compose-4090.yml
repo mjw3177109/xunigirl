@@ -1,4 +1,5 @@
 # Optional DUIX lip-sync video worker. No separate DSH, ASR or TTS containers.
+# GPU image for general CUDA GPUs (not the 5090-specific TensorRT build).
 services:
   duix-avatar-gen-video:
     image: guiji2025/duix.avatar:latest

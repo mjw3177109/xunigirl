@@ -1,0 +1,2 @@
+VoiceCompanion DeepSeek RTX4090 · V1.3 complete bundle with Xiaoya portrait and starter voice.
+Base: V1.2 integrated. Extra: synthetic preview WAV; GPU neural voice generation script.

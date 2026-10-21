@@ -97,6 +97,7 @@ def parse_sse_line(line: str) -> str:
         return ""
 
 
+# Maintain compatibility with the V1.0 smoke test and downstream scripts.
 consume_deepseek_line = parse_sse_line
 
 
@@ -260,10 +261,13 @@ async def chat(req: ChatRequest, request: Request):
     })
 
 
+# Only the optional pinned speech backend is reused. The DSH browser plugin is not.
+# The backend is imported only if its Python files were installed, and failures
+# do not prevent text chat from starting.
 UPSTREAM = ROOT / "upstream"
 try:
     if (UPSTREAM / "bridge" / "voice_bridge.py").is_file():
-        os.chdir(UPSTREAM)
+        os.chdir(UPSTREAM)  # upstream handles some paths relative to CWD
         sys.path.insert(0, str(UPSTREAM / "bridge"))
         import voice_bridge  # type: ignore[import-not-found]
         app.mount("/voice", voice_bridge.app, name="upstream-voice")

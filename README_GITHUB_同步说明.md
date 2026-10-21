@@ -1,15 +1,21 @@
 # GitHub 完整同步说明
 
-当前 GitHub 仓库 `mjw3177109/xunigirl` 已包含基础配置和核心 Python 后端。
+当前 ChatGPT GitHub 连接已将项目说明、基础配置和核心 Python 后端直接提交至 `mjw3177109/xunigirl`。
 
-**完整 V1.3 包含 60 个代码、脚本和资源文件，部分文件尚需从下载的完整 ZIP 导入。** 不能只用现在的仓库文件作为可运行完整版本。
+如果网页、工具和图片/参考音频尚未出现在 GitHub，请在 **本 ZIP 解压目录** 下运行 `PUBLISH_GITHUB.cmd`。
+该脚本会将本地完整 V1.3 源码与素材提交到 `https://github.com/mjw3177109/xunigirl` 的 main 分支，保留已有 GitHub 提交历史。
 
-下载 ChatGPT 提供的 `VoiceCompanion_V1.3_GitHub发布版.zip`，解压到本地，双击 `PUBLISH_GITHUB.cmd` 即可将全部源文件、小雅 PNG 和参考 WAV 同步到 main。
+需要本地已安装 Git for Windows 并登录具有仓库写权限的 GitHub 账号。
 
-脚本将通过 GitHub Credential Manager 使用你登录的 GitHub 账号，正常提交，不强制推送，不上传 `.env`、`.venv`、模型权重、聊天数据库等私有数据。
+## 安全
 
-完成后检查：
-- `backend/main.py`
-- `web/app.js`
-- `assets/portraits/xiaoya.png`
-- `voices/xiaoya/ref_audio.wav`
+不会推送 `.env`、`.venv`、`upstream`、`models`、聊天数据库、日志或模型缓存；
+会推送 `voices/xiaoya/ref_audio.wav`、参考文本以及 `assets/portraits/xiaoya.png`。
+默认仅推送，没有强制推送。
+
+推送后在仓库中核验 `backend/main.py`、`web/app.js`、`assets/portraits/xiaoya.png`、`voices/xiaoya/ref_audio.wav`。
+
+```powershell
+Get-Item .\voices\xiaoya\ref_audio.wav
+Get-Item .\assets\portraits\xiaoya.png
+```
