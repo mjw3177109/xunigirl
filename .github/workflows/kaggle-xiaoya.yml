@@ -16,7 +16,7 @@ permissions:
 jobs:
   submit-kaggle-gpu:
     # A single requested push initiates GPU submission; subsequent routine pushes won't.
-    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'ci: run Kaggle Xiaoya GPU once'
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Kaggle Xiaoya GPU once')
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
