@@ -18,6 +18,9 @@ def test_avatar_video_notebook_has_real_model_and_audio_video_validation():
     assert "np.exceptions.VisibleDeprecationWarning" in source
     assert "Image.Resampling.LANCZOS" in source
     assert "patch_counts" in source
+    assert "facexlib==0.3.0" in source
+    assert "Dependency install failed" in source
+    assert "GFPGAN" in source
 
     for c in cells:
         s="".join(c["source"])
