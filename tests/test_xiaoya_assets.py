@@ -18,8 +18,15 @@ def test_bundled_voice_is_valid_and_transcribed():
     assert float(abs(sig).max())>.05
     text=(d/'ref_text.txt').read_text(encoding='utf-8').strip()
     assert text.startswith('你好呀，我是小雅')
-    assert json.loads((d/'ref_source.json').read_text(encoding='utf-8'))['quality']=='preview_replace_with_qwen_generated_voice'
-    assert needs_generation(False)
+    meta=json.loads((d/'ref_source.json').read_text(encoding='utf-8'))
+    quality=meta['quality']
+    assert quality in {'preview_replace_with_qwen_generated_voice', 'neural_voice_generated_on_kaggle_t4'}
+    assert needs_generation(False) == (quality == 'preview_replace_with_qwen_generated_voice')
+    if quality == 'neural_voice_generated_on_kaggle_t4':
+        import hashlib
+        assert hashlib.sha256(wav.read_bytes()).hexdigest() == meta['sha256']['ref_audio.wav']
+        assert meta['source_github_artifact_run'] == 39545400976
+        assert (ROOT/'assets'/'voice-samples'/'xiaoya_clone_test.wav').is_file()
 
 
 def test_character_image_served_by_standalone_api():
