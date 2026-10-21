@@ -15,6 +15,10 @@ def test_avatar_video_notebook_has_real_model_and_audio_video_validation():
     assert "xiaoya_talking_pilot.mp4" in source
     assert "ffprobe" in source and "audio" in source and "video" in source
     assert "5017add8a805d69b97a60d4a7caf16d0f087c8dbec0cf62e636154b1ee289feb" in source
+    assert "np.exceptions.VisibleDeprecationWarning" in source
+    assert "Image.Resampling.LANCZOS" in source
+    assert "patch_counts" in source
+
     for c in cells:
         s="".join(c["source"])
         if s.lstrip().startswith("%"):continue
