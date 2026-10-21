@@ -1,5 +1,8 @@
 name: Kaggle Free GPU Xiaoya
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/kaggle-xiaoya.yml']
   workflow_dispatch:
     inputs:
       kaggle_username:
@@ -12,11 +15,13 @@ permissions:
 
 jobs:
   submit-kaggle-gpu:
+    # A single requested push initiates GPU submission; subsequent routine pushes won't.
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message == 'ci: run Kaggle Xiaoya GPU once'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
       KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-      KAGGLE_USER: ${{ inputs.kaggle_username }}
+      KAGGLE_USER: ${{ inputs.kaggle_username || 'mjw3177109' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -43,6 +48,7 @@ jobs:
               "kernel_type":"notebook",
               "is_private":True,
               "enable_gpu":True,
+              "machine_shape":"NvidiaTeslaT4",
               "enable_internet":True,
               "dataset_sources":[],
               "competition_sources":[],
