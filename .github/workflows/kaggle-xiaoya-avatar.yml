@@ -29,7 +29,7 @@ jobs:
           import json
           p=Path("kaggle/kernel-metadata.json")
           p.write_text(json.dumps({
-            "id":"mjw3177109/xunigirl-xiaoya-avatar-video-pilot",
+            "id":"mjw3177109/xunigirl-xiaoya-sadtalker-gpu-mp4-pilot",
             "title":"Xunigirl Xiaoya SadTalker GPU MP4 Pilot",
             "code_file":"xiaoya_t4_avatar_video_pilot.ipynb",
             "language":"python","kernel_type":"notebook",
@@ -45,5 +45,5 @@ jobs:
         run: kaggle kernels push -p kaggle --accelerator NvidiaTeslaT4 --timeout 3600
       - name: Record execution link (not an inference success claim)
         run: |
-          echo "Kaggle submitted (not yet validated MP4): https://www.kaggle.com/code/mjw3177109/xunigirl-xiaoya-avatar-video-pilot" >> "$GITHUB_STEP_SUMMARY"
-          kaggle kernels status mjw3177109/xunigirl-xiaoya-avatar-video-pilot || true
+          echo "Kaggle submitted (not yet validated MP4): https://www.kaggle.com/code/mjw3177109/xunigirl-xiaoya-sadtalker-gpu-mp4-pilot" >> "$GITHUB_STEP_SUMMARY"
+          kaggle kernels status mjw3177109/xunigirl-xiaoya-sadtalker-gpu-mp4-pilot || true
