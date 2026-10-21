@@ -1,0 +1,78 @@
+name: Collect Kaggle Xiaoya GPU Result
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/kaggle-xiaoya-collect.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  collect-result:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Kaggle Xiaoya result collector once')
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    env:
+      KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+      KAGGLE_NOTEBOOK: mjw3177109/xunigirl-xiaoya-gpu-voice-benchmark
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check Kaggle access
+        shell: bash
+        run: |
+          test -n "$KAGGLE_API_TOKEN" || { echo "::error::Missing KAGGLE_API_TOKEN"; exit 1; }
+          python -m pip install -q --upgrade kaggle
+      - name: Wait for real GPU result
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, subprocess, time, sys
+          kernel=os.environ["KAGGLE_NOTEBOOK"]
+          for attempt in range(1,27):
+              p=subprocess.run(["kaggle","kernels","status",kernel],capture_output=True,text=True,timeout=45)
+              value=(p.stdout+" "+p.stderr).strip()
+              status=value.upper()
+              print(f"Check {attempt}/26: "+value[:700],flush=True)
+              if p.returncode == 0 and "COMPLETE" in status and "INCOMPLETE" not in status:
+                  print("Kaggle GPU notebook completed; downloading real output.",flush=True)
+                  sys.exit(0)
+              if p.returncode == 0 and any(x in status for x in ("ERROR","CANCELLED","CANCELED","FAILED")):
+                  sys.exit("Kaggle kernel reported failure; see Kaggle notebook run logs")
+              if attempt != 26: time.sleep(55)
+          sys.exit("Kaggle GPU job not completed within observation window; rerun collector later")
+          PY
+      - name: Download generated WAV and GPU report
+        run: |
+          mkdir -p kaggle_results
+          kaggle kernels output "$KAGGLE_NOTEBOOK" -p kaggle_results -o
+          find kaggle_results -maxdepth 5 -type f -printf '%p %s bytes\n'
+      - name: Validate real WAV and report
+        run: |
+          python - <<'PY'
+          import json, pathlib, zipfile, wave, io, sys
+          root=pathlib.Path('kaggle_results')
+          zips=list(root.rglob('xiaoya_gpu_results.zip'))
+          if not zips:
+              sys.exit('No final xiaoya_gpu_results.zip found; notebook output incomplete')
+          with zipfile.ZipFile(zips[0]) as z:
+              if z.testzip() is not None: sys.exit('ZIP CRC error')
+              assert {'ref_audio.wav','ref_text.txt','clone_test.wav','gpu_report.json'} <= set(z.namelist())
+              report=json.loads(z.read('gpu_report.json'))
+              assert report.get('status')=='gpu_inference_completed'
+              for name in ('ref_audio.wav','clone_test.wav'):
+                  with wave.open(io.BytesIO(z.read(name))) as w:
+                      assert w.getnchannels()==1 and w.getframerate()==16000 and w.getnframes()>16000
+              print('Verified real result:',zips[0],flush=True)
+              print('GPU:',report.get('gpu'), 'stage_count:',len(report.get('stages',[])),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xiaoya-real-gpu-voice
+          path: kaggle_results/
+          retention-days: 30
+      - name: Write result link
+        run: echo "GPU result artifact uploaded. Download in this workflow run after success." >> "$GITHUB_STEP_SUMMARY"
