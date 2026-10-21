@@ -1,4 +1,5 @@
 name: Kaggle Xiaoya Avatar Video Pilot
+# Submit once after verified Python 3.13 dependency fix; retain the same Kaggle kernel slug.
 on:
   push:
     branches: [main]
