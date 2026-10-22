@@ -50,3 +50,14 @@ def test_avatar_face_crop_bounds_and_sadtalker_bbox_fix():
     assert "if x2 <= x1 or y2 <= y1" in src
     assert "detect_faces(img_np, 0.85)" in src
     assert "video_report.json" in src
+
+
+def test_avatar_numpy_scalar_translation_patch():
+    notebook=json.loads((ROOT/"kaggle/xiaoya_t4_avatar_video_pilot.ipynb").read_text(encoding="utf-8"))
+    src="\n".join("".join(c.get("source",[])) for c in notebook["cells"])
+    assert 'face_preprocess=sadtalker/"src/face3d/util/preprocess.py"' in src
+    assert 't = np.asarray([np.asarray(sTx).item(), np.asarray(sTy).item()], dtype=np.float64)' in src
+    assert 'trans_params = np.asarray([float(w0), float(h0), float(np.asarray(s).item()), float(np.asarray(t[0]).item()), float(np.asarray(t[1]).item())], dtype=np.float32)' in src
+    assert "Unexpected SadTalker POS translation implementation" in src
+    assert "Unexpected SadTalker trans_params implementation" in src
+    assert "probe_params.shape==(5,)" in src
