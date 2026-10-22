@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/kaggle-xiaoya-avatar.yml
+      - kaggle/xiaoya_t4_avatar_video_pilot.ipynb
   workflow_dispatch:
 
 permissions:
