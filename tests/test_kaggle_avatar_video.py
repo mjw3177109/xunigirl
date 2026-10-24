@@ -21,6 +21,8 @@ def test_avatar_video_notebook_has_real_model_and_audio_video_validation():
     assert "facexlib==0.3.0" in source
     assert "Dependency install failed" in source
     assert "GFPGAN" in source
+    # Compatibility patch uses np in its own execution cell (not imported in earlier cells).
+    assert cells[3]["source"][0].strip() == "import numpy as np"
 
     for c in cells:
         s="".join(c["source"])
