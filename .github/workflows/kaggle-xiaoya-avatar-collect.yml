@@ -4,6 +4,12 @@ on:
     workflows: ['Kaggle Xiaoya Avatar Video Pilot']
     types: [completed]
   workflow_dispatch:
+  # Re-validate existing Kaggle output after collector-only fixes, without
+  # re-submitting the T4 notebook or consuming another GPU session.
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/kaggle-xiaoya-avatar-collect.yml
 permissions:
   contents: read
 jobs:
@@ -22,6 +28,11 @@ jobs:
         run: |
           test -n "$KAGGLE_API_TOKEN"
           python -m pip install -q kaggle
+      - name: Install ffprobe for media acceptance test
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffprobe
       - name: Poll real Kaggle T4 inference status
         shell: bash
         run: |
