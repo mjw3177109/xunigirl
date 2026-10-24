@@ -19,7 +19,7 @@ This is a SadTalker single-image talking-head **inference** pilot on Kaggle T4, 
 1. Previous failures: facexlib missing, face-crop OpenCV empty image, NumPy 2 mixed-shape `trans_params`, and `np` missing in the notebook compatibility cell. They were fixed in earlier commits; don't repeat them.
 2. New collector failure in run `40065813578`: `FileNotFoundError: [Errno 2] No such file or directory: 'ffprobe'` during the acceptance step. The real MP4 **was** downloaded; the CI runner lacked the ffprobe executable.
 3. Minimal fix in commit `5ef53b1683b19b57e42bcdf3c5dbdcc2dd2d69ed`: install `ffmpeg` (provides `ffprobe`) in the collector and add a collector-only `push` trigger on changes to its own workflow file. The Kaggle submission workflow does not watch the collector file, avoiding a new GPU run for this CI-only problem.
-4. Collector-only verification run: https://github.com/mjw3177109/xunigirl/actions/runs/40069628527. Check this run for final independent CI acceptance; local ffprobe has already confirmed the original artifact.
+4. Collector-only verification run: https://github.com/mjw3177109/xunigirl/actions/runs/40069628527 — **SUCCESS**. The job log explicitly reports `VERIFIED REAL MP4 kaggle_video_result/xiaoya_video_results/xiaoya_talking_pilot.mp4 seconds 8.24 size_bytes 169847` after ffprobe verifies both tracks and duration. The verified GitHub Artifact is https://github.com/mjw3177109/xunigirl/actions/runs/40069628527/artifacts/12549669953 (expires 2026-11-08T06:18:28Z). No new Kaggle GPU run was triggered by this collector-only fix.
 
 ## Follow-up quality notes
 - Renderer log warns that 256x250 source frames were resized to 256x256 for macroblock compatibility. This is a quality consideration, **not** an acceptance failure.
